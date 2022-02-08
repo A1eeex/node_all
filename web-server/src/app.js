@@ -19,26 +19,27 @@ app.use(express.static(publicDirectoryPath))
 
 app.get('', (req, res) => {
     res.render('index', {
-        title: 'index app',
-        name: 'alex'
+        title: 'index title',
+        name:'Alex'
     })
 })
 
 app.get('/about', (req, res) => {
     res.render('about', {
-        name: 'alex'
+        title: 'about page',
+        name:'Jax'
     })
 })
-
-app.get('/weather', (req, res) => {
-    res.send('Weather page')
-})
-
 app.get('/help', (req, res) => {
     res.render('help', {
-        title: 'help Page'
+        title: 'help page',
+        name:'Carolif'
     })
 })
+
+// app.get('/weather', (req, res) => {
+//     res.send('Weather page')
+// })
 
 app.listen(PORT, () => {
     console.log('server work on port ' + PORT)
