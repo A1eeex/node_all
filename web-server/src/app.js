@@ -1,7 +1,8 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
-
+const geoCode = require('./utils/geocode')
+const getWeather = require('./utils/weather')
 const app = express()
 const PORT = 3000;
 
@@ -30,6 +31,46 @@ app.get('/about', (req, res) => {
         name: 'Jax'
     })
 })
+app.get('/weather', (req, res) => {
+        if (!req.query.address) {
+            return res.send({
+                error: 'You must provide address!'
+            })
+        }
+        geoCode(req.query.address, (error, response) => {
+            if (error) {
+                return res.send(error)
+            }
+            console.log(response)
+            getWeather(response.latitude, response.longitude, (err, resWeather) => {
+                console.log(resWeather)
+                if (err) {
+                    return res.send(err)
+                }
+                res.send({
+                        location: resWeather.location,
+                        country: resWeather.country,
+                        temperature: resWeather.temperature,
+                        address: req.query.address
+                    }
+                )
+            })
+        })
+
+    }
+)
+
+app.get('/products', (req, res) => {
+    if (!req.query.search) {
+        return res.send({
+            error: 'you must provide a search tern'
+        })
+    }
+    console.log(req.query.search)
+    res.send({
+        products: []
+    })
+})
 app.get('/help', (req, res) => {
     res.render('help', {
         title: 'help page',
@@ -37,14 +78,14 @@ app.get('/help', (req, res) => {
     })
 })
 app.get('/help/*', (req, res) => {
-    res.render('404',{
+    res.render('404', {
         title: '404',
-        errMessage:'Help article not found',
+        errMessage: 'Help article not found',
     })
 })
 app.get('*', (req, res) => {
     res.render('404', {
-        errMessage:'Page not found!',
+        errMessage: 'Page not found!',
         title: '404',
         name: 'empty'
     })
